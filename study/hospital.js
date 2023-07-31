@@ -11,7 +11,6 @@ class App {
 		// _ 시작하는 경우 자바로 비교하면 privite App Class 내에서만 사용 해야 한다.
 		const divContainer = document.querySelector("#webgl-container");
 
-		// 다른 method에서 참조 하기 위해 필드 설정
 		this._divContainer = divContainer;
 
 		const renderer = new THREE.WebGLRenderer({ antiialias: true }); // antiialias : 3차원 장면이 렌더링 될때 object 경계선이 부드럽게 표현
@@ -34,18 +33,22 @@ class App {
 
 		requestAnimationFrame(this.render.bind(this));
 
+		// const helper = new THREE.CameraHelper(this._camera);
+		// this._scene.add(helper);
+
 		//X 축은 붉은색, Y 축은 녹색, Z 축은 파란색
-		const axes = new THREE.AxesHelper(5);
-		this._scene.add(axes);
+		// const axes = new THREE.AxesHelper(5);
+		// this._scene.add(axes);
 	}
 
 	_setupCamera() {
 		const width = this._divContainer.clientWidth;
 		const height = this._divContainer.clientHeight;
 		const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100);
+
 		camera.position.z = 50;
-		// camera.position.set(0, -10, -5);
-		// camera.lookAt(0, 0, 0);
+		camera.position.set(80, 80, 10);
+		camera.lookAt(0, 0, 0);
 		this._camera = camera;
 	}
 
@@ -63,8 +66,11 @@ class App {
 
 		loader.load(url, (object) => {
 			console.log(object);
+
 			const root = object.scene;
+			root.position.set(0, 0, 0);
 			this._scene.add(root);
+			this._root = root;
 		});
 		undefined,
 			function (error) {
@@ -73,7 +79,7 @@ class App {
 	}
 
 	_setupControls() {
-		new OrbitControls(this._camera, this._divContainer);
+		const controls = new OrbitControls(this._camera, this._divContainer);
 	}
 
 	// 창 크기 변경시 마다 크기를 조정
@@ -90,12 +96,8 @@ class App {
 	// 장면의 애니메이션 효과
 	render(time) {
 		this._renderer.render(this._scene, this._camera);
-		this.update(time);
+		// this.update(time);
 		requestAnimationFrame(this.render.bind(this));
-	}
-
-	update(time) {
-		time *= 0.001; //
 	}
 }
 
